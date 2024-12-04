@@ -6,13 +6,13 @@ const envConfigFile = `
 export const environment = {
   production: true,
   firebase: {
-    apiKey: '${process.env.FIREBASE_API_KEY}',
-    authDomain: '${process.env.FIREBASE_AUTH_DOMAIN}',
-    databaseURL: '${process.env.FIREBASE_DATABASE_URL}',
-    projectId: '${process.env.FIREBASE_PROJECT_ID}',
-    storageBucket: '${process.env.FIREBASE_STORAGE_BUCKET}',
-    messagingSenderId: '${process.env.FIREBASE_MESSAGING_SENDER_ID}',
-    appId: '${process.env.FIREBASE_APP_ID}'
+    apiKey: "AIzaSyDJmcm1dLx4-jpgg7nUHM2XgUElvQx0Dj8",
+    authDomain: "pizzaria-a305e.firebaseapp.com",
+    databaseURL: "https://pizzaria-a305e-default-rtdb.firebaseio.com",
+    projectId: "pizzaria-a305e",
+    storageBucket: "pizzaria-a305e.firebasestorage.app",
+    messagingSenderId: "198592109960",
+    appId: "1:198592109960:web:a043b7f7d39452971b2e3d"
   }
 };
 `;
