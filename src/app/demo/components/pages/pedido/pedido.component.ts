@@ -6,8 +6,7 @@ import { Table } from 'primeng/table';
 import { PedidoService } from 'src/app/demo/service/pedido.service';
 import { ClienteService } from 'src/app/demo/service/cliente.service';
 import { ProductService } from 'src/app/demo/service/product.service';
-import { PizzaService } from 'src/app/demo/service/pizza.service';
-import { Pizza } from 'src/app/demo/api/pizza.model';
+import { Product } from 'src/app/demo/api/product';
 
 @Component({
     templateUrl: './pedido.component.html',
@@ -19,9 +18,8 @@ export class PedidoComponent implements OnInit {
     deletePedidosDialog: boolean = false;
 
     pedidos: Pedido[] = [];
-    clientes: Cliente[] = []; // List of clientes
-
-    itens: Pizza[] = [];
+    clientes: Cliente[] = []; // Lista de clientes
+    itens: Product[] = []; // Lista de produtos
 
     pedido: Pedido = this.createEmptyPedido();
     selectedPedidos: Pedido[] = [];
@@ -35,37 +33,28 @@ export class PedidoComponent implements OnInit {
         private pedidoService: PedidoService,
         private clienteService: ClienteService,
         private productService: ProductService,
-        private pizzaService: PizzaService,
         private messageService: MessageService
     ) {}
 
     ngOnInit() {
-        // Fetch products from Firebase
-        this.pizzaService.getPizzas().subscribe((data) => {
-            this.itens = data.map((pizza) => ({
-                ...pizza, // Retain all existing properties
-                id: pizza.key, // Use the `key` as a unique identifier
+        // Carrega produtos
+        this.productService.getProducts().subscribe((data) => {
+            this.itens = data.map((product) => ({
+                ...product,
+                id: product.key, // Inclui a chave gerada se necessário
             }));
-            console.log('Normalized Products:', this.itens);
+            console.log('Itens carregados:', this.itens); // Debug para verificar carregamento
         });
 
-        // Fetch clientes
+        // Carrega clientes
         this.clienteService.getClientes().subscribe((data) => {
             this.clientes = data;
         });
 
-        // Fetch pedidos
+        // Carrega pedidos
         this.pedidoService.getPedidos().subscribe((data) => {
             this.pedidos = data;
         });
-
-        // Column configuration
-        this.cols = [
-            { field: 'cliente.nome', header: 'Cliente' },
-            { field: 'itens', header: 'Itens' },
-            { field: 'total', header: 'Total' },
-            { field: 'dataPedido', header: 'Data do Pedido' },
-        ];
     }
 
     openNew() {
@@ -79,7 +68,7 @@ export class PedidoComponent implements OnInit {
     }
 
     editPedido(pedido: Pedido) {
-        this.pedido = { ...pedido }; // Deep copy to avoid modifying original data
+        this.pedido = { ...pedido }; // Cópia para evitar alterar diretamente os dados
         this.pedidoDialog = true;
     }
 
@@ -92,7 +81,7 @@ export class PedidoComponent implements OnInit {
         this.deletePedidosDialog = false;
         this.pedidoService.deletePedido(this.pedido.id).then(() => {
             this.pedidos = this.pedidos.filter((val) => !this.selectedPedidos.includes(val));
-            this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'Pedidos Deleted', life: 3000 });
+            this.messageService.add({ severity: 'success', summary: 'Sucesso', detail: 'Pedidos excluídos', life: 3000 });
             this.selectedPedidos = [];
         });
     }
@@ -101,7 +90,7 @@ export class PedidoComponent implements OnInit {
         this.deletePedidoDialog = false;
         this.pedidoService.deletePedido(this.pedido.id).then(() => {
             this.pedidos = this.pedidos.filter((val) => val.id !== this.pedido.id);
-            this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'Pedido Deleted', life: 3000 });
+            this.messageService.add({ severity: 'success', summary: 'Sucesso', detail: 'Pedido excluído', life: 3000 });
             this.pedido = this.createEmptyPedido();
         });
     }
@@ -113,25 +102,26 @@ export class PedidoComponent implements OnInit {
 
     savePedido() {
         this.submitted = true;
-   
+
         if (this.pedido.cliente && this.pedido.itens && this.pedido.itens.length > 0) {
+            // Calcula o total com base nos preços dos itens
             this.pedido.total = this.pedido.itens.reduce((sum, product) => sum + product.price, 0);
-   
+
             if (this.pedido.id) {
-                // Update existing pedido
+                // Atualiza pedido existente
                 this.pedidoService.updatePedido(this.pedido.id, this.pedido).then(() => {
-                    this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'Pedido Updated', life: 3000 });
+                    this.messageService.add({ severity: 'success', summary: 'Sucesso', detail: 'Pedido atualizado', life: 3000 });
                     this.pedidos = this.pedidos.map((val) => (val.id === this.pedido.id ? this.pedido : val));
                 });
             } else {
-                // Create new pedido and get the key from Firebase
+                // Cria novo pedido
                 this.pedidoService.createPedido(this.pedido).then((response) => {
-                    this.pedido.id = response.key;  // Firebase generates the key
-                    this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'Pedido Created', life: 3000 });
+                    this.pedido.id = response.key; // Firebase gera a chave
+                    this.messageService.add({ severity: 'success', summary: 'Sucesso', detail: 'Pedido criado', life: 3000 });
                     this.pedidos.push({ ...this.pedido });
                 });
             }
-   
+
             this.pedidoDialog = false;
             this.pedido = this.createEmptyPedido();
         } else {
@@ -142,12 +132,12 @@ export class PedidoComponent implements OnInit {
                 life: 3000,
             });
         }
-    }   
+    }
 
     createEmptyPedido(): Pedido {
         return {
             cliente: null,
-            itens: [],
+            itens: null,
             total: 0,
             dataPedido: new Date(),
         };
@@ -166,5 +156,4 @@ export class PedidoComponent implements OnInit {
         console.log('Available Products:', this.itens);
         console.log('Selected Itens:', this.pedido.itens);
     }
-    
 }

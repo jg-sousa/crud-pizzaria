@@ -32,7 +32,7 @@
                         <td>{{ pedido.cliente?.nome }}</td>
                         <td>
                             <ul>
-                                <li *ngFor="let item of pedido.itens">{{ item.name }}</li>
+                                <li *ngFor="let item of pedido.itens">{{ item.nome }}</li>
                             </ul>
                         </td>
                         <td>{{ pedido.total | currency:'BRL' }}</td>
@@ -56,7 +56,7 @@
                         [options]="clientes" 
                         [(ngModel)]="pedido.cliente" 
                         optionLabel="nome" 
-                        placeholder="Selecione um Cliente" 
+                        placeholder="Selecione o cliente para o pedido" 
                         required 
                         [ngClass]="{'ng-invalid ng-dirty': submitted && !pedido.cliente}">
                     </p-dropdown>
@@ -69,14 +69,15 @@
                     <p-multiSelect 
                         [options]="itens" 
                         [(ngModel)]="pedido.itens" 
-                        optionLabel="name" 
-                        placeholder="Selecione os Produtos" 
+                        optionLabel="nome" 
+                        placeholder="Selecione os produtos para o pedido" 
                         required 
-                        [ngClass]="{'ng-invalid ng-dirty': submitted && (!pedido.itens || pedido.itens.length === 0)}">
+                        [ngClass]="{'ng-invalid ng-dirty': submitted && (!pedido.itens || pedido.itens.length === 0)}"
+                        (onChange)="onItensChange()">
                     </p-multiSelect>
-                    <small *ngIf="submitted && (!pedido.itens || pedido.itens.length === 0)" class="p-error">Itens são obrigatórios.</small>
+                    <small *ngIf="submitted && (!pedido.itens || pedido.itens.length === 0)" class="p-error">Produtos são obrigatórios.</small>
                 </div>
-        
+                              
                 <!-- Total -->
                 <div class="field">
                     <label for="total">Total</label>
