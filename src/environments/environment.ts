@@ -2,12 +2,12 @@
 export const environment = {
   production: true,
   firebase: {
-    apiKey: "AIzaSyDJmcm1dLx4-jpgg7nUHM2XgUElvQx0Dj8",
-    authDomain: "pizzaria-a305e.firebaseapp.com",
-    databaseURL: "https://pizzaria-a305e-default-rtdb.firebaseio.com",
-    projectId: "pizzaria-a305e",
-    storageBucket: "pizzaria-a305e.firebasestorage.app",
-    messagingSenderId: "198592109960",
-    appId: "1:198592109960:web:a043b7f7d39452971b2e3d"
+  apiKey: "AIzaSyAl0Tek5QSvAO9h9J0yMPuHci1H0qlIgew",
+  authDomain: "pizzaria-crud-523bc.firebaseapp.com",
+  databaseURL: "https://pizzaria-crud-523bc-default-rtdb.firebaseio.com",
+  projectId: "pizzaria-crud-523bc",
+  storageBucket: "pizzaria-crud-523bc.firebasestorage.app",
+  messagingSenderId: "522637532217",
+  appId: "1:522637532217:web:2f09ba50783e3b4824c1e8"
   }
 };

@@ -113,12 +113,10 @@ export class PedidoComponent implements OnInit {
 
     savePedido() {
         this.submitted = true;
-
-        // Validate cliente and itens
+   
         if (this.pedido.cliente && this.pedido.itens && this.pedido.itens.length > 0) {
-            // Calculate total price
             this.pedido.total = this.pedido.itens.reduce((sum, product) => sum + product.price, 0);
-
+   
             if (this.pedido.id) {
                 // Update existing pedido
                 this.pedidoService.updatePedido(this.pedido.id, this.pedido).then(() => {
@@ -126,14 +124,14 @@ export class PedidoComponent implements OnInit {
                     this.pedidos = this.pedidos.map((val) => (val.id === this.pedido.id ? this.pedido : val));
                 });
             } else {
-                // Create new pedido
-                this.pedido.id = this.createId();
-                this.pedidoService.createPedido(this.pedido).subscribe(() => {
+                // Create new pedido and get the key from Firebase
+                this.pedidoService.createPedido(this.pedido).then((response) => {
+                    this.pedido.id = response.key;  // Firebase generates the key
                     this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'Pedido Created', life: 3000 });
                     this.pedidos.push({ ...this.pedido });
                 });
             }
-
+   
             this.pedidoDialog = false;
             this.pedido = this.createEmptyPedido();
         } else {
@@ -144,7 +142,7 @@ export class PedidoComponent implements OnInit {
                 life: 3000,
             });
         }
-    }
+    }   
 
     createEmptyPedido(): Pedido {
         return {
